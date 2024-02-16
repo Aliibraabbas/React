@@ -1,31 +1,29 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+// Need to use the React-specific entry point to import createApi
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-export const productsApi = createApi({
-  reducerPath: 'productsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://iim.etherial.fr' }),
+// Define a service using a base URL and expected endpoints
+export const productApi = createApi({
+  tagTypes: ['products'],
+  reducerPath: 'productApi',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https:/iim.etherial.fr' }),
   endpoints: (builder) => ({
-    // Endpoint pour récupérer tous les produits
     getProducts: builder.query({
-      query: () => '/products',
+      query: () => `/products`,
     }),
-    // Endpoint pour récupérer les commentaires d'un produit spécifique
     getProductComments: builder.query({
       query: (productId) => `/products/${productId}/comments`,
     }),
-    // Endpoint pour créer un commentaire sur un produit spécifique
     createProductComment: builder.mutation({
-      query: (data) => ({
-        url: `/products/${data.productId}/comments`,
-        method: 'POST',
-        body: data,
-      }),
+        query: (data) => ({
+            url: `/products/${data.productId}/comments`,
+            method: 'POST',
+            body: data,
+        }),
+        invalidatesTags: ['products'],
     }),
   }),
-});
+})
 
-// Export des hooks pour utiliser les endpoints dans les composants React
-export const {
-  useGetProductsQuery,
-  useGetProductCommentsQuery,
-  useCreateProductCommentMutation,
-} = productsApi;
+// Export hooks for usage in functional components, which are
+// auto-generated based on the defined endpoints
+export const { useGetProductsQuery ,useGetProductCommentsQuery, useCreateProductCommentMutation } = productApi

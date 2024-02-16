@@ -1,65 +1,85 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
+import { CartContext } from '../Contexts/CartContext';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Link, useLocation } from 'react-router-dom';
-import CartContext from '../Contexts/CartContext';
+import cart from '../assets/shopping-cart.svg';
 
 const HeaderContainer = styled.header`
-  background-color: #333;
-  color: white;
-  padding: 20px;
+    background-color: white;
+    color: red;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;  
 `;
 
-const Nav = styled.nav`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const Navbar = styled.nav`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 1200px;
+    margin: 0 auto;
 `;
 
-const NavItem = styled(Link)`
-  margin-right: 20px;
-  color: white;
-  text-decoration: none;
-  position: relative;
-
-  &:hover {
-    color: #007bff;
-  }
-
-  span {
-    position: absolute;
-    right: -10px;
-    top: -10px;
-    background-color: red;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
+const NavList = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: white;
-  }
+`;
+
+const NavItem = styled.li`
+    margin-right: 20px;
+`;
+
+const NavLink = styled(Link)`
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+    font-weight: 500;
+`;
+
+const CartLink = styled(Link)`
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+`;
+
+const CartIcon = styled.img`
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+`;
+
+const CartCount = styled.span`
+    background-color: red;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 14px;
 `;
 
 export default function Header() {
-  const location = useLocation();
-  const [itemCount, setItemCount] = useState(0);
-  const cartContext = useContext(CartContext);
+    const { products } = useContext(CartContext);
 
-  useEffect(() => {
-    const storedCartItems = JSON.parse(localStorage.getItem('cartItems'));
-    setItemCount(storedCartItems ? storedCartItems.length : 0);
-  }, [location, cartContext]);
+    const totalProducts = products.reduce((total, product) => total + product.amount, 0);
 
-  return (
-    <HeaderContainer>
-      <Nav>
-        <NavItem to="/">Home</NavItem>
-        <NavItem to="/cart">
-          <img width={40} height={40} src="data:image/png;" alt="Cart" />
-          {itemCount > 0 && <span>{itemCount}</span>}
-        </NavItem>
-      </Nav>
-    </HeaderContainer>
-  );
+    return (
+        <HeaderContainer>
+            <Navbar>
+                <NavList>
+
+                    <NavItem>
+                        <NavLink to="/">Products</NavLink>
+                    </NavItem>
+                </NavList>
+                <CartLink to="/cart">
+                    <CartIcon src={cart} alt="cart" />
+                    <CartCount>{totalProducts}</CartCount>
+                </CartLink>
+            </Navbar>
+        </HeaderContainer>
+    );
 }
